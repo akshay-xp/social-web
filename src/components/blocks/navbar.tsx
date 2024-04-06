@@ -11,7 +11,7 @@ export const Navbar = () => {
       </Link>
       <SearchBar />
       <ul>
-        <Link className={buttonVariants({ variant: "default" })} to={"/"}>
+        <Link className={buttonVariants({ variant: "default" })} to={"/login"}>
           Login
         </Link>
       </ul>
