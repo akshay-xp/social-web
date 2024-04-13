@@ -11,21 +11,28 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as BaseImport } from './routes/_base'
 import { Route as AuthImport } from './routes/_auth'
-import { Route as IndexImport } from './routes/index'
+import { Route as BaseIndexImport } from './routes/_base/index'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as BasePostsPostIdImport } from './routes/_base/posts/$postId'
 
 // Create/Update Routes
+
+const BaseRoute = BaseImport.update({
+  id: '/_base',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthRoute = AuthImport.update({
   id: '/_auth',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const BaseIndexRoute = BaseIndexImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => BaseRoute,
 } as any)
 
 const AuthSignupRoute = AuthSignupImport.update({
@@ -38,16 +45,21 @@ const AuthLoginRoute = AuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const BasePostsPostIdRoute = BasePostsPostIdImport.update({
+  path: '/posts/$postId',
+  getParentRoute: () => BaseRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
     '/_auth': {
       preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_base': {
+      preLoaderRoute: typeof BaseImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login': {
@@ -58,14 +70,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupImport
       parentRoute: typeof AuthImport
     }
+    '/_base/': {
+      preLoaderRoute: typeof BaseIndexImport
+      parentRoute: typeof BaseImport
+    }
+    '/_base/posts/$postId': {
+      preLoaderRoute: typeof BasePostsPostIdImport
+      parentRoute: typeof BaseImport
+    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  IndexRoute,
   AuthRoute.addChildren([AuthLoginRoute, AuthSignupRoute]),
+  BaseRoute.addChildren([BaseIndexRoute, BasePostsPostIdRoute]),
 ])
 
 /* prettier-ignore-end */
