@@ -2,6 +2,7 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { jwtDecode } from "jwt-decode";
 
 import { cn } from "@/lib/utils";
 import { signupSchema } from "@/lib/validations/auth";
@@ -39,8 +40,10 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       const result = await api.post("auth/signup", payload, {
         withCredentials: true,
       });
+      const accessToken = result.data.accessToken;
+      const decoded = jwtDecode(accessToken);
       flushSync(() => {
-        setAuth({ accessToken: result.data.accessToken });
+        setAuth({ accessToken, userId: decoded.sub ?? "" });
       });
       navigate({ to: "/" });
     } catch (error) {

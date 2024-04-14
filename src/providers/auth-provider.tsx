@@ -2,6 +2,7 @@ import { ReactNode, createContext, useState } from "react";
 
 type Auth = {
   accessToken: string;
+  userId: string;
 };
 
 type AuthProviderPRops = {
@@ -14,14 +15,14 @@ type AuthProviderState = {
 };
 
 const initialState: AuthProviderState = {
-  auth: { accessToken: "" },
+  auth: { accessToken: "", userId: "" },
   setAuth: () => null,
 };
 
 export const AuthContext = createContext<AuthProviderState>(initialState);
 
 export const AuthProvider = ({ children }: AuthProviderPRops) => {
-  const [auth, setAuth] = useState<Auth>({ accessToken: "" });
+  const [auth, setAuth] = useState<Auth>({ accessToken: "", userId: "" });
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>

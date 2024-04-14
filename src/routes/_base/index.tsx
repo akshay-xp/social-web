@@ -28,6 +28,7 @@ function IndexPage() {
           title={post.title}
           content={post.content}
           poster={post.poster.username}
+          posterId={post.poster.id}
         />
       ))}
     </div>

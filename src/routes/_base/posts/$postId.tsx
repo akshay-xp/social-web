@@ -8,7 +8,7 @@ import {
   useQuery,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 const postQueryOptions = (postId: string) =>
   queryOptions({
@@ -29,7 +29,7 @@ function Post() {
   const postQuery = useSuspenseQuery(postQueryOptions(postId));
   const post = postQuery.data;
   const commentQuery = useQuery({
-    queryKey: ["comments"],
+    queryKey: ["comments", { postId }],
     queryFn: () => fetchComments(postId),
   });
   const comments = commentQuery.data;
@@ -41,14 +41,20 @@ function Post() {
         title={post.title}
         content={post.content}
         poster={post.poster.username}
+        posterId={post.poster.id}
       />
       {isAuthenticated && <CommentForm postId={postId} />}
       {comments
         ? comments.map((comment) => (
             <div key={comment.id} className="space-y-1">
-              <h4 className="text-sm font-medium leading-none">
-                {comment.author.username}
-              </h4>
+              <Link
+                to={"/profile/$userId"}
+                params={{ userId: comment.author.id }}
+              >
+                <h4 className="text-sm font-medium leading-none">
+                  {comment.author.username}
+                </h4>
+              </Link>
               <p className="text-sm text-muted-foreground">{comment.content}</p>
             </div>
           ))

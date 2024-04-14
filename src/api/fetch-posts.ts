@@ -1,6 +1,7 @@
 import { api } from "./axios";
 
 type Poster = {
+  id: string;
   username: string;
 };
 
@@ -11,8 +12,10 @@ type Post = {
   poster: Poster;
 };
 
-export const fetchPosts = async () => {
-  const response = await api.get<Post[]>("/posts");
+export const fetchPosts = async (posterId?: string) => {
+  const response = await api.get<Post[]>("/posts", {
+    params: { posterId },
+  });
   return response.data;
 };
 

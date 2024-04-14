@@ -16,6 +16,7 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as BaseIndexImport } from './routes/_base/index'
 import { Route as AuthSignupImport } from './routes/_auth/signup'
 import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as BaseProfileUserIdImport } from './routes/_base/profile/$userId'
 import { Route as BasePostsPostIdImport } from './routes/_base/posts/$postId'
 
 // Create/Update Routes
@@ -43,6 +44,11 @@ const AuthSignupRoute = AuthSignupImport.update({
 const AuthLoginRoute = AuthLoginImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
+} as any)
+
+const BaseProfileUserIdRoute = BaseProfileUserIdImport.update({
+  path: '/profile/$userId',
+  getParentRoute: () => BaseRoute,
 } as any)
 
 const BasePostsPostIdRoute = BasePostsPostIdImport.update({
@@ -78,6 +84,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BasePostsPostIdImport
       parentRoute: typeof BaseImport
     }
+    '/_base/profile/$userId': {
+      preLoaderRoute: typeof BaseProfileUserIdImport
+      parentRoute: typeof BaseImport
+    }
   }
 }
 
@@ -85,7 +95,11 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   AuthRoute.addChildren([AuthLoginRoute, AuthSignupRoute]),
-  BaseRoute.addChildren([BaseIndexRoute, BasePostsPostIdRoute]),
+  BaseRoute.addChildren([
+    BaseIndexRoute,
+    BasePostsPostIdRoute,
+    BaseProfileUserIdRoute,
+  ]),
 ])
 
 /* prettier-ignore-end */
